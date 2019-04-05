@@ -1,7 +1,4 @@
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -19,30 +16,52 @@ public class Main {
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = null;
 
         for (int i = 0; i < xmlFiles.length; i++){
             if (xmlFiles[i].isFile()) {
-                System.out.println("File " + xmlFiles[i].getName());
-                String tempfilename = xmlFiles[i].getName();
-                String filename = "Parsed files\\"+tempfilename;
-                //String filename = "Parsed files\\project-rcn-193157_en.xml";
-                System.out.println("filename "+ filename);
-
-                doc = dBuilder.parse(filename);
+                System.out.println("File:  " + xmlFiles[i].getName());
+                Document doc = dBuilder.parse(xmlFiles[i]);
                 Element rootElement = doc.getDocumentElement();
-                //System.out.println("Root Element: " + rootElement.getNodeName());
+                doc.createElement("text");
 
-                NodeList nodelist = rootElement.getChildNodes();
-                for(int j = 0; j < nodelist.getLength(); j++){
-                    Node node = nodelist.item(j);
+                //doc.getDocumentElement().normalize();
+                NodeList rcnNodes = doc.getElementsByTagName("project");
 
-                    if(node.getNodeType() == Node.ELEMENT_NODE){
-                        Element element = (Element) node;
-                        if(element.getNodeName().equals("objective")){
-                            //String objective = element.getElementsByTagName("objctive").item(0).getTextContent();
-                            //System.out.println("objective"+ objective);
-                        }
+
+                //NodeList nodelist = rootElement.getChildNodes();
+                for(int j = 0; j < rcnNodes.getLength(); j++){
+
+                    Node rcnNode = rcnNodes.item(j);
+
+                    //Node node = nodelist.item(j);
+                    System.out.println("Node: "+ rcnNode);
+
+                    if(rcnNode.getNodeType() == Node.ELEMENT_NODE){
+                        Element element = (Element) rcnNode;
+                        System.out.println("element: " + element);
+
+                        //doc.renameNode(element, "title", "text");
+
+                        String rcn = element.getElementsByTagName("rcn").item(0).getTextContent();
+                        String acronym = element.getElementsByTagName("acronym").item(0).getTextContent();
+                        String objective = element.getElementsByTagName("objective").item(0).getTextContent();
+                        String title = element.getElementsByTagName("title").item(0).getTextContent();
+                        String identifier = element.getElementsByTagName("identifier").item(0).getTextContent();
+
+                        //element.getElementsByTagName("text") = element.getElementsByTagName("objective").item(0).getTextContent();
+                        //element.appendChild((Node) element.getElementsByTagName("text"));
+
+                        NodeList temp = (NodeList) element.getElementsByTagName("title").item(0);
+
+                        System.out.println("temp:  "+temp);
+
+                        //element.appendChild(doc.createElement("text"));
+                        doc.renameNode(element.getElementsByTagName("title").item(0), "", "text");
+
+
+                        System.out.println("final "+element);
+
+
 
                     }
                 }
