@@ -29,7 +29,10 @@ public class Main {
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        int count = 193157;
+
+        int count = 0;
+        FileWriter fileWriter = new FileWriter("TestJson.txt");
+        fileWriter.write("POST /louk_english_index/doc/_bulk?pretty" + "\n");
 
         for (int i = 0; i < xmlFiles.length; i++){
             if (xmlFiles[i].isFile()) {
@@ -81,22 +84,21 @@ public class Main {
                 DOMSource source = new DOMSource(doc);
                 transformer.transform(source, result);
                 String xmlString = result.getWriter().toString();
+                //System.out.println("String" + xmlString);
 
                 JSONObject obj = XML.toJSONObject(xmlString);
-                System.out.println(obj.toString(4));
+                //System.out.println(obj.toString());
 
 
                 //write jsons to file
                 try{
-                    FileWriter fileWriter = new FileWriter("Jsons\\json"+ count++ + ".json");
-                    fileWriter.write(obj.toString(4));
-                    fileWriter.flush();
-                    fileWriter.close();
+                    fileWriter.write("{\"index\":{\"_id\":\"" + ++count + "\"}}" + "\n" + obj.toString() + "\n");
                 }catch (IOException e){
-                    System.out.println("exception " + e.getMessage());
+                    System.out.println("exception "  + e.getMessage());
                 }
             }
         }
-
+        fileWriter.flush();
+        fileWriter.close();
     }
 }
